@@ -207,10 +207,8 @@ void createDictionary(fstream& dictFile, unordered_map<string, string>& dictMap)
 }
 
 void insertToMap(fstream& dictFile, unordered_map<string, string> & dictMap, string st){
-    system("cls");
     string meaning;
-    cout<< "Enter the meaning\n";
-    // getline(cin, meaning);
+    cout<< "Enter one word meaning\n";
     cin>> meaning;
     dictFile.open("C:/vscode_codes/ds_tries/words/dictionary.txt",ios::app); //open a file to perform read operation using file object 
 
