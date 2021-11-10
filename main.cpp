@@ -5,19 +5,31 @@ const int ALPHABET_SIZE = 26;
 #define indexOf(c) ((int)c - (int)'a')
 
 // trie node
-struct TrieNode
-{
-    struct TrieNode *children[ALPHABET_SIZE];
- 
+class TrieNode
+{   public:
+    TrieNode *children[ALPHABET_SIZE];
     // isEndOfWord is true if the node represents
     // end of a word
     bool isEndOfWord;
+    
+    //  methods
+    TrieNode* getNode(string word);
+    TrieNode* insert(TrieNode *root, string key);
+    void insertToMap(fstream& dictFile, unordered_map<string, string> & dictMap, string st);
+    void createDictionary(fstream& dictFile, unordered_map<string, string>& dictMap);
+    void lowerCase(string & str);
+    void createFileTree(fstream & newfile, vector<string> & words, TrieNode* root);
+    void suggestionsRec(TrieNode* root, string currPrefix);
+    int printAutoSuggestions(TrieNode* root, const string query);
+    bool isLastNode(TrieNode* root);
+    bool search(TrieNode *root, const string key);
+
 };
  
 // Returns new trie node (initialized to NULLs)
-struct TrieNode *getNode(void)
+TrieNode *getNode(void)
 {
-    struct TrieNode *pNode =  new TrieNode;
+    TrieNode *pNode =  new TrieNode;
  
     pNode->isEndOfWord = false;
  
@@ -30,9 +42,9 @@ struct TrieNode *getNode(void)
 // If not present, inserts key into trie
 // If the key is prefix of trie node, just
 // marks leaf node
-void insert(struct TrieNode *root, string key)
+void insert(TrieNode *root, string key)
 {
-    struct TrieNode *trie_iterator = root;
+    TrieNode *trie_iterator = root;
  
     for (int i = 0; i < key.length(); i++)
     {
@@ -48,10 +60,10 @@ void insert(struct TrieNode *root, string key)
 }
  
 // Returns true if key presents in trie, else false
-bool search(struct TrieNode *root, const string key)
+bool search(TrieNode *root, const string key)
 {
     int length = key.length();
-    struct TrieNode *trie_iterator = root;
+    TrieNode *trie_iterator = root;
     for (int level = 0; level < length; level++)
     {
         int index = indexOf(key[level]);
@@ -67,7 +79,7 @@ bool search(struct TrieNode *root, const string key)
  
 // Returns 0 if current node has a child
 // If all children are NULL, return 1.
-bool isLastNode(struct TrieNode* root)
+bool isLastNode(TrieNode* root)
 {
     for (int i = 0; i < ALPHABET_SIZE; i++)
         if (root->children[i])
@@ -77,7 +89,7 @@ bool isLastNode(struct TrieNode* root)
  
 // Recursive function to print auto-suggestions for given
 // node.
-void suggestionsRec(struct TrieNode* root, string currPrefix)
+void suggestionsRec(TrieNode* root, string currPrefix)
 {
     // found a string in Trie with the given prefix
     if (root->isEndOfWord)
@@ -86,7 +98,7 @@ void suggestionsRec(struct TrieNode* root, string currPrefix)
         cout << endl;
     }
  
-    // All children struct node pointers are NULL
+    // All children node pointers are NULL
     if (isLastNode(root))
         return;
  
@@ -108,7 +120,7 @@ void suggestionsRec(struct TrieNode* root, string currPrefix)
 // print suggestions for given query prefix.
 int printAutoSuggestions(TrieNode* root, const string query)
 {
-    struct TrieNode* trie_iterator = root;
+    TrieNode* trie_iterator = root;
  
     // Check if prefix is present and find the
     // the node (of last level) with last character
@@ -166,7 +178,7 @@ void createFileTree(fstream & newfile, vector<string> & words, TrieNode* root){
         cout<< words.size()<< " words allocated in the tree\n";
         int n= words.size(); 
 
-        // Construct trie
+        // Contrie
         for (int i = 0; i < n; i++){
             insert(root, words[i]);
         }
@@ -226,7 +238,7 @@ int main(){
     fstream dictFile, newfile;
     unordered_map<string, string> dictMap;
     string st, str;
-    struct TrieNode *root = getNode();
+    TrieNode *root = getNode();
     // Creating file
     createFileTree(newfile, words, root);
     createDictionary(dictFile, dictMap);
