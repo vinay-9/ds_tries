@@ -12,37 +12,34 @@ class TrieNode
     // end of a word
     bool isEndOfWord;
     
+    TrieNode(){ 
+        this->isEndOfWord = false;
+        for (int i = 0; i < ALPHABET_SIZE; i++)
+            this->children[i] = NULL;
+        }
     //  methods
-    TrieNode* getNode(string word);
-    TrieNode* insert(TrieNode *root, string key);
-    void insertToMap(fstream& dictFile, unordered_map<string, string> & dictMap, string st);
-    void createDictionary(fstream& dictFile, unordered_map<string, string>& dictMap);
-    void lowerCase(string & str);
-    void createFileTree(fstream & newfile, vector<string> & words, TrieNode* root);
+    void insert(TrieNode *root, string key);
     void suggestionsRec(TrieNode* root, string currPrefix);
     int printAutoSuggestions(TrieNode* root, const string query);
     bool isLastNode(TrieNode* root);
     bool search(TrieNode *root, const string key);
 
 };
- 
+
+
+class Dictionary{
+    public:
+    void insertToMap(fstream& dictFile, unordered_map<string, string> & dictMap, string st);
+    void createDictionary(fstream& dictFile, unordered_map<string, string>& dictMap);
+    void lowerCase(string & str);
+    void createFileTree(fstream & newfile, vector<string> & words, TrieNode* root);
+};
 // Returns new trie node (initialized to NULLs)
-TrieNode *getNode(void)
-{
-    TrieNode *pNode =  new TrieNode;
- 
-    pNode->isEndOfWord = false;
- 
-    for (int i = 0; i < ALPHABET_SIZE; i++)
-        pNode->children[i] = NULL;
- 
-    return pNode;
-}
- 
+
 // If not present, inserts key into trie
 // If the key is prefix of trie node, just
 // marks leaf node
-void insert(TrieNode *root, string key)
+void TrieNode:: insert(TrieNode *root, string key)
 {
     TrieNode *trie_iterator = root;
  
@@ -50,7 +47,7 @@ void insert(TrieNode *root, string key)
     {
         int index = key[i] - 'a';
         if (!trie_iterator->children[index])
-            trie_iterator->children[index] = getNode();
+            trie_iterator->children[index] = new TrieNode();
  
         trie_iterator = trie_iterator->children[index];
     }
@@ -60,7 +57,7 @@ void insert(TrieNode *root, string key)
 }
  
 // Returns true if key presents in trie, else false
-bool search(TrieNode *root, const string key)
+bool TrieNode:: search(TrieNode *root, const string key)
 {
     int length = key.length();
     TrieNode *trie_iterator = root;
@@ -79,7 +76,7 @@ bool search(TrieNode *root, const string key)
  
 // Returns 0 if current node has a child
 // If all children are NULL, return 1.
-bool isLastNode(TrieNode* root)
+bool TrieNode:: isLastNode(TrieNode* root)
 {
     for (int i = 0; i < ALPHABET_SIZE; i++)
         if (root->children[i])
@@ -89,7 +86,7 @@ bool isLastNode(TrieNode* root)
  
 // Recursive function to print auto-suggestions for given
 // node.
-void suggestionsRec(TrieNode* root, string currPrefix)
+void TrieNode:: suggestionsRec(TrieNode* root, string currPrefix)
 {
     // found a string in Trie with the given prefix
     if (root->isEndOfWord)
@@ -118,7 +115,7 @@ void suggestionsRec(TrieNode* root, string currPrefix)
 }
  
 // print suggestions for given query prefix.
-int printAutoSuggestions(TrieNode* root, const string query)
+int TrieNode:: printAutoSuggestions(TrieNode* root, const string query)
 {
     TrieNode* trie_iterator = root;
  
@@ -164,7 +161,7 @@ int printAutoSuggestions(TrieNode* root, const string query)
     }
 }
  
-void createFileTree(fstream & newfile, vector<string> & words, TrieNode* root){
+void Dictionary:: createFileTree(fstream & newfile, vector<string> & words, TrieNode* root){
     newfile.open("C:/vscode_codes/ds_tries/words/unigram_freq.txt",ios::in); //open a file to perform read operation using file object
     if (newfile.is_open()){ //checking whether the file is open
         string tp;
@@ -180,17 +177,17 @@ void createFileTree(fstream & newfile, vector<string> & words, TrieNode* root){
 
         // Contrie
         for (int i = 0; i < n; i++){
-            insert(root, words[i]);
+            root->insert(root, words[i]);
         }
 }
-void lowerCase(string & str){
+void Dictionary:: lowerCase(string & str){
       for (int i = 0; i < (str.length()); i++) {
     // convert str[i] to lowercase
     str[i]= tolower(str[i]);
   }
 }
 
-void createDictionary(fstream& dictFile, unordered_map<string, string>& dictMap){
+void Dictionary:: createDictionary(fstream& dictFile, unordered_map<string, string>& dictMap){
     
     dictFile.open("C:/vscode_codes/ds_tries/words/dictionary.txt",ios::in); //open a file to perform read operation using file object
     if (dictFile.is_open()){ //checking whether the file is open
@@ -218,7 +215,7 @@ void createDictionary(fstream& dictFile, unordered_map<string, string>& dictMap)
 
 }
 
-void insertToMap(fstream& dictFile, unordered_map<string, string> & dictMap, string st){
+void Dictionary:: insertToMap(fstream& dictFile, unordered_map<string, string> & dictMap, string st){
     string meaning;
     cout<< "Enter one word meaning\n";
     cin>> meaning;
@@ -238,10 +235,11 @@ int main(){
     fstream dictFile, newfile;
     unordered_map<string, string> dictMap;
     string st, str;
-    TrieNode *root = getNode();
+    TrieNode *root = new TrieNode();
+    Dictionary d;
     // Creating file
-    createFileTree(newfile, words, root);
-    createDictionary(dictFile, dictMap);
+    d.createFileTree(newfile, words, root);
+    d.createDictionary(dictFile, dictMap);
 
     do{
         system("cls");
@@ -255,9 +253,9 @@ int main(){
                 // Search for words
                 cout<< "enter the item to search:\n";
                 cin>> str;
-                search(root, str)? cout << "Word found\nsearch suggestions are: \n" : cout << "Word not found\n";
+                root->search(root, str)? cout << "Word found\nsearch suggestions are: \n" : cout << "Word not found\n";
                 int ans;
-                ans = printAutoSuggestions(root, str);            
+                ans = root->printAutoSuggestions(root, str);            
                 break;
 
             case 2: 
@@ -272,14 +270,14 @@ int main(){
                     cout<<"want to enter the meaning? in break (y/n)";
                     cin>> preference;
                     if(preference!= 'n')
-                        insertToMap(dictFile, dictMap, st);
+                        d.insertToMap(dictFile, dictMap, st);
                 }
                 break;
 
             case 3: 
                 cout<< "Enter the word \n";
                 cin>> st;
-                insertToMap(dictFile, dictMap, st);
+                d.insertToMap(dictFile, dictMap, st);
                 break;
             default:
                 cout<< "wrong choice !! exiting";

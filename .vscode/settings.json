@@ -3,6 +3,12 @@
         "vector": "cpp",
         "iostream": "cpp",
         "xstring": "cpp",
-        "string": "cpp"
+        "string": "cpp",
+        "deque": "cpp",
+        "list": "cpp",
+        "map": "cpp",
+        "unordered_map": "cpp",
+        "xhash": "cpp",
+        "xtree": "cpp"
     }
 }
