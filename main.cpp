@@ -4,7 +4,6 @@ using namespace std;
 const int ALPHABET_SIZE = 26;
 #define indexOf(c) ((int)c - (int)'a')
 
- 
 // trie node
 struct TrieNode
 {
@@ -47,8 +46,6 @@ void insert(struct TrieNode *root, string key)
     // mark last node as leaf
     trie_iterator->isEndOfWord = true;
 }
- 
-
  
 // Returns true if key presents in trie, else false
 bool search(struct TrieNode *root, const string key)
@@ -195,28 +192,25 @@ void createDictionary(fstream& dictFile, unordered_map<string, string>& dictMap)
             }else 
                 dictMap[word]= meaning;
         }
-        dictFile.close(); 
 
     }
+    dictFile.close(); 
 
 }
 
 void insertToMap(fstream& dictFile, unordered_map<string, string> & dictMap, string st){
     system("cls");
     dictFile.open("C:/vscode_codes/ds_tries/words/word_meaning.txt",ios::app); //open a file to perform read operation using file object 
-      
-        char ans;
-        cin>>ans;
-        if(ans=='y'){
+       
             string meaning;
             cout<< "Enter the meaning\n";
             cin>> meaning;
             if (dictFile.is_open()){ //checking whether the file is open
-                dictFile<<st<<","<<meaning;
+                dictFile<<"\n"<<st<<","<<meaning;
                 dictFile.close(); 
                 dictMap[st]= meaning;
             }
-        }
+            dictFile.close();
 }
 int main(){
 
@@ -228,19 +222,21 @@ int main(){
     struct TrieNode *root = getNode();
     // Creating file
     createFile(newfile, words, root);
+    createDictionary(dictFile, dictMap);
 
     do{
         system("cls");
         int choice=0;
         cout<<"--------------------------------------------------MENU-------------------------------------------------------------------------------\n";
         cout<< "1. Enter 1 to use word search + autocomplete feature \n2. Enter 2 to find meaning of a word \n3. Enter 3 to add a new word to the dictionary\n";
+        cout<< "Enter your choice\n";
         cin>> choice;
         switch(choice){
             case 1:
                 // Search for words
                 cout<< "enter the item to search:\n";
                 cin>> str;
-                search(root, "the")? cout << "Word found\n" : cout << "Word not found\n";
+                search(root, str)? cout << "Word found\n" : cout << "Word not found\n";
                 cout<< "search suggestions are: \n";
                 int ans;
                 ans = printAutoSuggestions(root, str);            
@@ -249,19 +245,16 @@ int main(){
             case 2: 
                 //  dictionary part
                 char preference;
-                createDictionary(dictFile, dictMap);
                 cout<<"enter the word to search the meaning\n";
                 cin>> st;
                 if(dictMap[st]!="")
                     cout<< "meaning of the word is \n"<< dictMap[st];
                 else{
-                    cout<< "meaning of the word does not exists\n";
-                    cout<<"want to enter the meaning?(y/n)";
-                    cin>> ans;
+                    cout<< "meaning of the word does not exist\n";
+                    cout<<"want to enter the meaning? in break (y/n)";
+                    cin>> preference;
                     if(preference!= 'n')
                         insertToMap(dictFile, dictMap, st);
-                    else
-                        break;
                 }
                 break;
 
@@ -272,7 +265,7 @@ int main(){
                 break;
 
         }
-        cout<< "Want to continue(y/n)?\n";
+        cout<< "Want to continue in while loop(y/n)?\n";
         cin>> cnt;
     }while(cnt!= 'n');
     
