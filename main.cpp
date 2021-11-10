@@ -292,7 +292,7 @@ int main(){
                 getch();
                 break;
             case '4':
-                cout<<"Exit";
+                cout<<"\nExit\n";
                 break;
             default:
                 cout<< "\nInvalid choice!!\n";
