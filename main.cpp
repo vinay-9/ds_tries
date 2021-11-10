@@ -152,7 +152,7 @@ int printAutoSuggestions(TrieNode* root, const string query)
     }
 }
  
-void createFile(fstream & newfile, vector<string> & words, TrieNode* root){
+void createFileTree(fstream & newfile, vector<string> & words, TrieNode* root){
     newfile.open("C:/vscode_codes/ds_tries/words/unigram_freq.txt",ios::in); //open a file to perform read operation using file object
     if (newfile.is_open()){ //checking whether the file is open
         string tp;
@@ -171,22 +171,30 @@ void createFile(fstream & newfile, vector<string> & words, TrieNode* root){
             insert(root, words[i]);
         }
 }
+void lowerCase(string & str){
+      for (int i = 0; i < (str.length()); i++) {
+    // convert str[i] to lowercase
+    str[i]= tolower(str[i]);
+  }
+}
 
 void createDictionary(fstream& dictFile, unordered_map<string, string>& dictMap){
     
-    dictFile.open("C:/vscode_codes/ds_tries/words/word_meaning.txt",ios::in); //open a file to perform read operation using file object
+    dictFile.open("C:/vscode_codes/ds_tries/words/dictionary.txt",ios::in); //open a file to perform read operation using file object
     if (dictFile.is_open()){ //checking whether the file is open
         string tp;
         while(getline(dictFile, tp)){ //read data from file object and put it into string.
             // cout << tp <<endl; //print the data of the string
             // each line has words seperated by "," with their meanings
-            int pos = tp.find(",");
-            string word= tp.substr(0, pos);
-            string meaning = tp.substr(pos+1, tp.length());
+            int pos = (tp.find(" "));
+            string word= (tp.substr(0, pos));
+            lowerCase(word);
+            string meaning = (tp.substr(pos+1, tp.length()));
+            lowerCase(meaning);
             // cout<< "word "<< word << " meaning "<< meaning<< endl;
             if(dictMap[word]!=""){
                 string temp= dictMap[word];
-                temp.append(", ");
+                temp.append("\n \n");
                 temp.append(meaning);
                 dictMap[word]= temp;
             }else 
@@ -200,17 +208,18 @@ void createDictionary(fstream& dictFile, unordered_map<string, string>& dictMap)
 
 void insertToMap(fstream& dictFile, unordered_map<string, string> & dictMap, string st){
     system("cls");
-    dictFile.open("C:/vscode_codes/ds_tries/words/word_meaning.txt",ios::app); //open a file to perform read operation using file object 
-       
-            string meaning;
-            cout<< "Enter the meaning\n";
-            cin>> meaning;
-            if (dictFile.is_open()){ //checking whether the file is open
-                dictFile<<"\n"<<st<<","<<meaning;
-                dictFile.close(); 
-                dictMap[st]= meaning;
-            }
-            dictFile.close();
+    string meaning;
+    cout<< "Enter the meaning\n";
+    // getline(cin, meaning);
+    cin>> meaning;
+    dictFile.open("C:/vscode_codes/ds_tries/words/dictionary.txt",ios::app); //open a file to perform read operation using file object 
+
+    if (dictFile.is_open()){ //checking whether the file is open
+        dictFile<<"\n"<<st<<" "<<meaning;
+        dictFile.close(); 
+        dictMap[st]= meaning;
+    }
+    dictFile.close();
 }
 int main(){
 
@@ -221,7 +230,7 @@ int main(){
     string st, str;
     struct TrieNode *root = getNode();
     // Creating file
-    createFile(newfile, words, root);
+    createFileTree(newfile, words, root);
     createDictionary(dictFile, dictMap);
 
     do{
@@ -236,8 +245,7 @@ int main(){
                 // Search for words
                 cout<< "enter the item to search:\n";
                 cin>> str;
-                search(root, str)? cout << "Word found\n" : cout << "Word not found\n";
-                cout<< "search suggestions are: \n";
+                search(root, str)? cout << "Word found\nsearch suggestions are: \n" : cout << "Word not found\n";
                 int ans;
                 ans = printAutoSuggestions(root, str);            
                 break;
@@ -263,9 +271,12 @@ int main(){
                 cin>> st;
                 insertToMap(dictFile, dictMap, st);
                 break;
+            default:
+                cout<< "wrong choice !! exiting";
+                exit(0);
 
         }
-        cout<< "Want to continue in while loop(y/n)?\n";
+        cout<< "\nWant to continue in while loop(y/n)?\n";
         cin>> cnt;
     }while(cnt!= 'n');
     
