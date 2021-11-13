@@ -294,7 +294,7 @@ int main(){
             case '3': 
                 cout<< "\nEnter the word: ";
                 cin>> st;
-                d.insertToMap(dictFile, dictMap, st);
+                d.insertToMap(st);
                 cout<<"\nPress anykey to continue...";
                 getch();
                 break;
