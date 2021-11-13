@@ -9,6 +9,7 @@
         "map": "cpp",
         "unordered_map": "cpp",
         "xhash": "cpp",
-        "xtree": "cpp"
+        "xtree": "cpp",
+        "iosfwd": "cpp"
     }
 }

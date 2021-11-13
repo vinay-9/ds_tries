@@ -28,11 +28,17 @@ class TrieNode
 
 
 class Dictionary{
-    public:
-    void insertToMap(fstream& dictFile, unordered_map<string, string> & dictMap, string st);
-    void createDictionary(fstream& dictFile, unordered_map<string, string>& dictMap);
+   
+    fstream dictFile;
+    fstream newFile;
+    
+    public: 
+    unordered_map<string, string> dictMap;
+    vector<string>  words;
+    void insertToMap(  string st);
+    void createDictionary();
     void lowerCase(string & str);
-    void createFileTree(fstream & newfile, vector<string> & words, TrieNode* root);
+    void createFileTree(TrieNode* root);
 };
 // Returns new trie node (initialized to NULLs)
 
@@ -161,15 +167,15 @@ int TrieNode:: printAutoSuggestions(TrieNode* root, const string query)
     }
 }
  
-void Dictionary:: createFileTree(fstream & newfile, vector<string> & words, TrieNode* root){
-    newfile.open("C:/vscode_codes/ds_tries/words/unigram_freq.txt",ios::in); //open a file to perform read operation using file object
-    if (newfile.is_open()){ //checking whether the file is open
+void Dictionary:: createFileTree(TrieNode* root){
+    newFile.open("C:/vscode_codes/ds_tries/words/unigram_freq.txt",ios::in); //open a file to perform read operation using file object
+    if (newFile.is_open()){ //checking whether the file is open
         string tp;
-        while(getline(newfile, tp)){ //read data from file object and put it into string.
+        while(getline(newFile, tp)){ //read data from file object and put it into string.
             // cout << tp << ", "; //print the data of the string
             words.push_back(tp);
         }
-        newfile.close(); 
+        newFile.close(); 
 
     }
         cout<< words.size()<< " words allocated in the tree\n";
@@ -187,7 +193,7 @@ void Dictionary:: lowerCase(string & str){
   }
 }
 
-void Dictionary:: createDictionary(fstream& dictFile, unordered_map<string, string>& dictMap){
+void Dictionary:: createDictionary(){
     
     dictFile.open("C:/vscode_codes/ds_tries/words/dictionary.txt",ios::in); //open a file to perform read operation using file object
     if (dictFile.is_open()){ //checking whether the file is open
@@ -215,7 +221,7 @@ void Dictionary:: createDictionary(fstream& dictFile, unordered_map<string, stri
 
 }
 
-void Dictionary:: insertToMap(fstream& dictFile, unordered_map<string, string> & dictMap, string st){
+void Dictionary:: insertToMap( string st){
     string meaning;
     cout<< "Enter one word meaning\n";
     cin>> meaning;
@@ -231,15 +237,15 @@ void Dictionary:: insertToMap(fstream& dictFile, unordered_map<string, string> &
 int main(){
 
     char cnt= 'n';
-    vector<string> words;
-    fstream dictFile, newfile;
-    unordered_map<string, string> dictMap;
+    // vector<string> words;
+    // fstream dictFile, newFile;
+    // unordered_map<string, string> dictMap;
     string st, str;
     TrieNode *root = new TrieNode();
     Dictionary d;
     // Creating file
-    d.createFileTree(newfile, words, root);
-    d.createDictionary(dictFile, dictMap);
+    d.createFileTree(root);
+    d.createDictionary();
 
     do{
         system("cls");
@@ -263,21 +269,21 @@ int main(){
                 char preference;
                 cout<<"enter the word to search the meaning\n";
                 cin>> st;
-                if(dictMap[st]!="")
-                    cout<< "meaning of the word is \n"<< dictMap[st];
+                if(d.dictMap[st]!="")
+                    cout<< "meaning of the word is \n"<< d.dictMap[st];
                 else{
                     cout<< "meaning of the word does not exist\n";
                     cout<<"want to enter the meaning? in break (y/n)";
                     cin>> preference;
                     if(preference!= 'n')
-                        d.insertToMap(dictFile, dictMap, st);
+                        d.insertToMap( st);
                 }
                 break;
 
             case 3: 
                 cout<< "Enter the word \n";
                 cin>> st;
-                d.insertToMap(dictFile, dictMap, st);
+                d.insertToMap( st);
                 break;
             default:
                 cout<< "wrong choice !! exiting";
